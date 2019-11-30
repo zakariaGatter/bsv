@@ -1,0 +1,110 @@
+#!/usr/bin/env bash
+
+#-------------#
+# SCRIPT NAME #
+#-------------#{{{
+_name_=${0##*/}
+#}}}
+
+#------------------#
+# SCRIPT VARIABLES #
+#------------------#{{{
+# create services list
+while read -r line ; do
+    ((_count_++))
+    s[$_count_]="$line"
+done < <(ls -1 /etc/sv)
+#}}}
+
+#--------------------#
+# SHOW ERROR MESSAGE #
+#--------------------#{{{
+_error_(){ printf "%s: %s\n" "${_name_^}" "${1}" && exit 1 ;}
+#}}}
+
+#-----------------#
+# SETUP TERMINAL  #
+#-----------------#{{{
+_setup_(){
+    printf '\e[?7l\e[?25l\e[2J\e[H'
+
+    shopt -s checkwinsize; (:;:)
+
+    # get terminal lines and coluns
+    read -r LINES COLUMNS < <(stty size)
+    ((m=LINES - 2))
+}
+#}}}
+
+#-------------------#
+# RESTORE TERMINAL  #
+#-------------------#{{{
+_restore_(){ printf '\e[?25h\e[?7h\e[999B' ;}
+#}}}
+
+#---------------------#
+# DRAW SERVICES LIST  #
+#---------------------#{{{
+_draw_(){
+    local   red=$(tput setaf 1)
+    local green=$(tput setaf 2)
+    local  blue=$(tput setaf 4)
+    local  cyan=$(tput setaf 6)
+    local reset=$(tput sgr0)
+    local _active_
+    tput cup 0 0
+
+for ((i=${k:=1};i<=(m=j>${#s[@]}?${#s[@]}:m);i++)) ; do
+    [ -e "/var/service/${s[$i]}" ] && _active_="${green}[X]" || _active_="${red}[ ]"
+    printf "%*s\r" "$COLUMNS"
+    printf "${blue}%2s: %s %s\n" "$i" "$_active_" "${reset}${s[$i]}"
+done
+    printf "%s\n" "${cyan}[a]dd [p]urge [u]p [d]own [r]estart [j/k] ($m/${#s[@]})${reset}"
+}
+#}}}
+
+#----------#
+# KEYBINDS #
+#----------#{{{
+_keys_(){
+case "$1" in
+    j ) ((m==${#s[@]})) || ((k=k>=m?k:++k,m=m<${#s[@]}?++m:m)) ;;
+    k ) ((k==1)) || ((k=k<=m?k>1?--k:1:m,m=m>1?--m:m)) ;;
+    u ) read -rp "Up Services (1 2 3): "       && for i in "${REPLY[@]}" ;{ sv up ${s[$i]}                      ;} ;;
+    d ) read -rp "Down Services (1 2 3): "     && for i in "${REPLY[@]}" ;{ sv down ${s[$i]}                    ;} ;;
+    r ) read -rp "Restart Services (1 2 3): "  && for i in "${REPLY[@]}" ;{ sv restart ${s[$i]}                 ;} ;;
+    a ) read -rp "Add Services (1 2 3): "      && for i in "${REPLY[@]}" ;{ ln -s /etc/sv/${s[$i]} /var/service ;} ;;
+    p ) read -rp "Purge Services (1 2 3): "    && for i in "${REPLY[@]}" ;{ rm -rf /var/service/${s[$i]}        ;} ;;
+    q ) _restore_ && exit ;;
+esac
+
+_draw_
+}
+#}}}
+
+#---------------#
+# MAIN FUNCTION #
+#---------------#{{{
+_main_(){
+_setup_
+_draw_
+
+trap '_restore_' EXIT
+trap 'k=1 ;_draw_' SIGWINCH
+
+for ((;;));{ read -rsn1 && _keys_ "$REPLY" ;}
+}
+#}}}
+
+#-------------------#
+# SUPER USER ACCESS #
+#-------------------#{{{
+[ "$UID" -ne 0 ] && _error_ "Warning, unable to open ${_name_}: Access Denied"
+#}}}
+
+#-------------------#
+# RUN MAIN FUNCTION #
+#-------------------#{{{
+_main_
+#}}}
+
