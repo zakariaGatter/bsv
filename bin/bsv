@@ -3,7 +3,7 @@
 #-------------#
 # SCRIPT NAME #
 #-------------#{{{
-_name_=${0##*/}
+name=${0##*/}
 #}}}
 
 #------------------#
@@ -19,7 +19,7 @@ done < <(ls -1 /etc/sv)
 #--------------------#
 # SHOW ERROR MESSAGE #
 #--------------------#{{{
-_error_(){ printf "%s: %s\n" "${_name_^}" "${1}" && exit 1 ;}
+die(){ printf "%s: %s\n" "${name^}" "${1}" ; exit 1 ;}
 #}}}
 
 #-----------------#
@@ -54,12 +54,12 @@ _draw_(){
     local _active_
     tput cup 0 0
 
-for ((i=${k:=1};i<=(m=j>${#s[@]}?${#s[@]}:m);i++)) ; do
-    [ -e "/var/service/${s[$i]}" ] && _active_="${green}[X]" || _active_="${red}[ ]"
+for ((i=${k:=1};i<=((m=i>${#s[@]}?${#s[@]}:m));i++)) ; do
+    [ -e "/var/service/${s[$i]}" ] && _active_="${green}[*]" || _active_="${red}[-]"
     printf "%*s\r" "$COLUMNS"
     printf "${blue}%2s: %s %s\n" "$i" "$_active_" "${reset}${s[$i]}"
 done
-    printf "%s\n" "${cyan}[a]dd [p]urge [u]p [d]own [r]estart [j/k] ($m/${#s[@]})${reset}"
+    printf "%s\n" "${cyan}[a]dd, [p]urge, [u]p, [d]own, [r]estart, [j/k] ($k-$m/${#s[@]})${reset}"
 }
 #}}}
 
@@ -70,15 +70,15 @@ _keys_(){
 case "$1" in
     j ) ((m==${#s[@]})) || ((k=k>=m?k:++k,m=m<${#s[@]}?++m:m)) ;;
     k ) ((k==1)) || ((k=k<=m?k>1?--k:1:m,m=m>1?--m:m)) ;;
-    u ) read -rp "Up Services (1 2 3): "       && for i in "${REPLY[@]}" ;{ sv up ${s[$i]}                      ;} ;;
-    d ) read -rp "Down Services (1 2 3): "     && for i in "${REPLY[@]}" ;{ sv down ${s[$i]}                    ;} ;;
-    r ) read -rp "Restart Services (1 2 3): "  && for i in "${REPLY[@]}" ;{ sv restart ${s[$i]}                 ;} ;;
-    a ) read -rp "Add Services (1 2 3): "      && for i in "${REPLY[@]}" ;{ ln -s /etc/sv/${s[$i]} /var/service ;} ;;
-    p ) read -rp "Purge Services (1 2 3): "    && for i in "${REPLY[@]}" ;{ rm -rf /var/service/${s[$i]}        ;} ;;
+    u ) read -rp "Up Services (1 2 3): "       && for i in ${REPLY[@]} ;{ sv up ${s[$i]}                      ;} ;;
+    d ) read -rp "Down Services (1 2 3): "     && for i in ${REPLY[@]} ;{ sv down ${s[$i]}                    ;} ;;
+    r ) read -rp "Restart Services (1 2 3): "  && for i in ${REPLY[@]} ;{ sv restart ${s[$i]}                 ;} ;;
+    a ) read -rp "Add Services (1 2 3): "      && for i in ${REPLY[@]} ;{ ln -s /etc/sv/${s[$i]} /var/service ;} ;;
+    p ) read -rp "Purge Services (1 2 3): "    && for i in ${REPLY[@]} ;{ rm -rf /var/service/${s[$i]}        ;} ;;
     q ) _restore_ && exit ;;
 esac
 
-_draw_
+clear; _draw_
 }
 #}}}
 
@@ -99,7 +99,7 @@ for ((;;));{ read -rsn1 && _keys_ "$REPLY" ;}
 #-------------------#
 # SUPER USER ACCESS #
 #-------------------#{{{
-[ "$UID" -ne 0 ] && _error_ "Warning, unable to open ${_name_}: Access Denied"
+[ "$UID" -ne 0 ] && die "Warning, unable to open ${name}: Access Denied"
 #}}}
 
 #-------------------#
