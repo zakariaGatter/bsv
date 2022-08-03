@@ -1,14 +1,8 @@
-# BSV
+# BSV [0.1.0]
 Void Linux Server manager in pure bash
 
-### Table of Contents
-
-- [About](#about)
-- [Installation](#installation)
-- [Usage](#Usage)
-
 ### About
-[BSV] is a interactive menu in Pure bash with less then 55 LOC
+[BSV] is a interactive Void Linux Servers Manager menu in Pure bash
 
 [BSV] allow you to ...
 
@@ -25,7 +19,8 @@ Void Linux Server manager in pure bash
 
 ### Installation
 
-* Requires:
+* Installation Requires:
+
     * [Bash](https://www.gnu.org/software/bash/bash.html)
     * [Coreutils](https://www.gnu.org/software/coreutils/)
 
@@ -34,15 +29,27 @@ Void Linux Server manager in pure bash
 * Setup [BV]:
 
     ```bash
-    git clone https://github.com/zakariaGatter/bsv.git ~/bsv
+    git clone https://github.com/zakariaGatter/bsv.git
+    git checkour tags/0.1.0
 	mkdir -p ~/.local/bin
-	cp ~/brash/bin/bsv ~/.local/bin
+	cp bsv/bin/bsv ~/.local/bin
 	chmod +x ~/.local/bin/bsv
     ```
 
 ### Usage
 
-There is no Usage just run bsv on your terminal and have fun
+```
+Bsv_0.1.0: Void Linux Servers Manager in Pure Bash
+USAGE: bsv [OPTIONS]
+
+OPTIONS:
+    -h  Show this help dialog
+    -v  Shwo Script Vesrion
+```
+
+# Preview
+![Simple](./preview/example.png)
+![Choice](./preview/choice.png)
 
 
 [BSV]:https://github.com/zakariagatter/bsv
