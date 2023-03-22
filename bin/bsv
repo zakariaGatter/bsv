@@ -4,7 +4,7 @@
 # SCRIPT NAME #
 #-------------#
 declare -r name=${0##*/}
-declare -r Version="0.1.0"
+declare -r Version="0.1.1"
 
 #---------------------#
 # ENABLE BASH OPTIONS #
@@ -175,7 +175,7 @@ USAGE: $name [OPTIONS]
 
 OPTIONS:
     -h  Show this help dialog
-    -v  Shwo Script Vesrion
+    -v  Show Script Vesrion
 HELP
 exit 0
 }

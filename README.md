@@ -1,4 +1,4 @@
-# BSV [0.1.0]
+# BSV [0.1.1]
 Void Linux Server manager in pure bash
 
 ### About
@@ -30,7 +30,7 @@ Void Linux Server manager in pure bash
 
     ```bash
     git clone https://github.com/zakariaGatter/bsv.git
-    git checkour tags/0.1.0
+    git checkour tags/0.1.1
 	mkdir -p ~/.local/bin
 	cp bsv/bin/bsv ~/.local/bin
 	chmod +x ~/.local/bin/bsv
@@ -39,12 +39,12 @@ Void Linux Server manager in pure bash
 ### Usage
 
 ```
-Bsv_0.1.0: Void Linux Servers Manager in Pure Bash
+Bsv_0.1.1: Void Linux Servers Manager in Pure Bash
 USAGE: bsv [OPTIONS]
 
 OPTIONS:
     -h  Show this help dialog
-    -v  Shwo Script Vesrion
+    -v  Show Script Vesrion
 ```
 
 # Preview
